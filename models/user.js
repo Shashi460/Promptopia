@@ -10,7 +10,7 @@ const userSchema = new Schema({
     username: {
       type: String,
       required: [true, 'Username is required!'],
-      match: [/^(?=.{6,20}$)(?![.])(?!.*[.]{2})[a-zA-Z0-9.]+(?<![.])$/],
+    //   match: [/^(?=.{6,20}$)(?![.])(?!.*[.]{2})[a-zA-Z0-9.]+(?<![.])$/],
       },
 
     image: {
