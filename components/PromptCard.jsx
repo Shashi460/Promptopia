@@ -42,7 +42,7 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   };
 
   return (
-    <div className='prompt_card'>
+    <div className='prompt_card rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 hover:shadow-xl'>
       <div className='flex justify-between items-start gap-5'>
         <div
           className='flex-1 flex justify-start items-center gap-3 cursor-pointer'
