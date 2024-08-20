@@ -4,19 +4,15 @@ import { useEffect, useState } from "react";
 
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
-    <div className='mt-16 prompt_layout'>
+    <div className="mt-16 prompt_layout">
       {data.map((post) => (
-        <PromptCard
-          key={post._id}
-          post={post}
-          handleTagClick={handleTagClick}
-        />
+        <PromptCard key={post._id} post={post} handleTagClick={handleTagClick} />
       ))}
     </div>
   );
 };
 
-const Feed = () => {
+const Feed = ({ triggerFetch }) => {
   const [allPosts, setAllPosts] = useState([]);
 
   // Search states
@@ -36,14 +32,14 @@ const Feed = () => {
       console.error("Failed to fetch posts:", error);
     }
   };
-  
 
+  // Fetch posts when the component mounts and when triggerFetch changes
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [triggerFetch]); // Dependency array now includes triggerFetch
 
-  const filterPrompts = (searchtext) => {
-    const regex = new RegExp(searchtext, "i"); // 'i' flag for case-insensitive search
+  const filterPrompts = (searchText) => {
+    const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
     return allPosts.filter(
       (item) =>
         regex.test(item.creator.username) ||
@@ -56,7 +52,7 @@ const Feed = () => {
     clearTimeout(searchTimeout);
     setSearchText(e.target.value);
 
-    // debounce method
+    // Debounce method
     setSearchTimeout(
       setTimeout(() => {
         const searchResult = filterPrompts(e.target.value);
@@ -73,24 +69,21 @@ const Feed = () => {
   };
 
   return (
-    <section className='feed'>
-      <form className='relative w-full flex-center'>
+    <section className="feed">
+      <form className="relative w-full flex-center">
         <input
-          type='text'
-          placeholder='Search for a tag or a username'
+          type="text"
+          placeholder="Search for a tag or a username"
           value={searchText}
           onChange={handleSearchChange}
           required
-          className='search_input peer'
+          className="search_input peer"
         />
       </form>
 
       {/* All Prompts */}
       {searchText ? (
-        <PromptCardList
-          data={searchedResults}
-          handleTagClick={handleTagClick}
-        />
+        <PromptCardList data={searchedResults} handleTagClick={handleTagClick} />
       ) : (
         <PromptCardList data={allPosts} handleTagClick={handleTagClick} />
       )}
