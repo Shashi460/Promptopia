@@ -10,6 +10,7 @@ const PromptCardList = ({ data, handleTagClick }) => {
           key={post._id}
           post={post}
           handleTagClick={handleTagClick}
+          // Add handlers for edit and delete
         />
       ))}
     </div>
@@ -43,7 +44,7 @@ const Feed = () => {
   }, [fetchPosts, operation]);
 
   const filterPrompts = (searchText) => {
-    const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
+    const regex = new RegExp(searchText, "i");
     return allPosts.filter(
       (item) =>
         regex.test(item.creator.username) ||
@@ -56,7 +57,6 @@ const Feed = () => {
     clearTimeout(searchTimeout);
     setSearchText(e.target.value);
 
-    // debounce method
     setSearchTimeout(
       setTimeout(() => {
         const searchResult = filterPrompts(e.target.value);
@@ -67,7 +67,6 @@ const Feed = () => {
 
   const handleTagClick = (tagName) => {
     setSearchText(tagName);
-
     const searchResult = filterPrompts(tagName);
     setSearchedResults(searchResult);
   };
@@ -83,7 +82,7 @@ const Feed = () => {
       });
 
       if (response.ok) {
-        setOperation("create"); // Trigger useEffect re-fetch
+        setOperation("create");
       }
     } catch (error) {
       console.error("Failed to create prompt:", error);
@@ -97,7 +96,7 @@ const Feed = () => {
       });
 
       if (response.ok) {
-        setOperation("delete"); // Trigger useEffect re-fetch
+        setOperation("delete");
       }
     } catch (error) {
       console.error("Failed to delete prompt:", error);
@@ -115,7 +114,7 @@ const Feed = () => {
       });
 
       if (response.ok) {
-        setOperation("edit"); // Trigger useEffect re-fetch
+        setOperation("edit");
       }
     } catch (error) {
       console.error("Failed to edit prompt:", error);
@@ -140,11 +139,17 @@ const Feed = () => {
         <PromptCardList
           data={searchedResults}
           handleTagClick={handleTagClick}
+          // Pass handlers if needed
         />
       ) : (
-        <PromptCardList data={allPosts} handleTagClick={handleTagClick} />
+        <PromptCardList
+          data={allPosts}
+          handleTagClick={handleTagClick}
+          // Pass handlers if needed
+        />
       )}
     </section>
   );
 };
+
 export default Feed;
