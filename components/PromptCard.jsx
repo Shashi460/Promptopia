@@ -10,12 +10,10 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   const router = useRouter();
 
   const [copied, setCopied] = useState("");
+  const [error, setError] = useState(null);  // Add error state
 
   const handleProfileClick = () => {
-    console.log(post);
-
     if (post.creator._id === session?.user.id) return router.push("/profile");
-
     router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);
   };
 
@@ -23,6 +21,24 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
     setCopied(post.prompt);
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(false), 3000);
+  };
+
+  const handleEditClick = async () => {
+    try {
+      await handleEdit();  // Assuming handleEdit is an async function
+    } catch (err) {
+      console.error("Failed to edit the prompt:", err);
+      setError("Failed to edit the prompt. Please try again.");  // Set error message
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    try {
+      await handleDelete();  // Assuming handleDelete is an async function
+    } catch (err) {
+      console.error("Failed to delete the prompt:", err);
+      setError("Failed to delete the prompt. Please try again.");  // Set error message
+    }
   };
 
   return (
@@ -76,18 +92,21 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         <div className='mt-5 flex-center gap-4 border-t border-gray-100 pt-3'>
           <p
             className='font-inter text-sm green_gradient cursor-pointer'
-            onClick={handleEdit}
+            onClick={handleEditClick}  // Use the new handleEditClick
           >
             Edit
           </p>
           <p
             className='font-inter text-sm orange_gradient cursor-pointer'
-            onClick={handleDelete}
+            onClick={handleDeleteClick}  // Use the new handleDeleteClick
           >
             Delete
           </p>
         </div>
       )}
+
+      {/* Display error message if any */}
+      {error && <p className='text-red-500 mt-2'>{error}</p>}
     </div>
   );
 };
