@@ -12,20 +12,12 @@ const PromptCardList = ({ data, handleTagClick }) => {
   );
 };
 
-const Feed = ({ triggerFetch }) => {
+const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
-
-  // Search states
-  const [searchText, setSearchText] = useState("");
-  const [searchTimeout, setSearchTimeout] = useState(null);
-  const [searchedResults, setSearchedResults] = useState([]);
-
+  
   const fetchPosts = async () => {
     try {
-      const response = await fetch("/api/prompt");
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
+      const response = await fetch("/api/prompt", { headers: { 'Cache-Control': 'no-cache' } });
       const data = await response.json();
       setAllPosts(data);
     } catch (error) {
@@ -33,62 +25,22 @@ const Feed = ({ triggerFetch }) => {
     }
   };
 
-  // Fetch posts when the component mounts and when triggerFetch changes
   useEffect(() => {
     fetchPosts();
-  }, [triggerFetch]); // Dependency array now includes triggerFetch
+  }, []);
 
-  const filterPrompts = (searchText) => {
-    const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
-    return allPosts.filter(
-      (item) =>
-        regex.test(item.creator.username) ||
-        regex.test(item.tag) ||
-        regex.test(item.prompt)
-    );
-  };
-
-  const handleSearchChange = (e) => {
-    clearTimeout(searchTimeout);
-    setSearchText(e.target.value);
-
-    // Debounce method
-    setSearchTimeout(
-      setTimeout(() => {
-        const searchResult = filterPrompts(e.target.value);
-        setSearchedResults(searchResult);
-      }, 500)
-    );
-  };
-
-  const handleTagClick = (tagName) => {
-    setSearchText(tagName);
-
-    const searchResult = filterPrompts(tagName);
-    setSearchedResults(searchResult);
+  const handleCreateOrDelete = async () => {
+    // Your logic for create or delete...
+    // Then re-fetch posts:
+    await fetchPosts();
   };
 
   return (
     <section className="feed">
-      <form className="relative w-full flex-center">
-        <input
-          type="text"
-          placeholder="Search for a tag or a username"
-          value={searchText}
-          onChange={handleSearchChange}
-          required
-          className="search_input peer"
-        />
-      </form>
-
-      {/* All Prompts */}
-      {searchText ? (
-        <PromptCardList data={searchedResults} handleTagClick={handleTagClick} />
-      ) : (
-        <PromptCardList data={allPosts} handleTagClick={handleTagClick} />
-      )}
+      <PromptCardList data={allPosts} handleCreateOrDelete={handleCreateOrDelete} />
     </section>
   );
 };
 
 export default Feed;
+
